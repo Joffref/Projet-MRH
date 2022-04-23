@@ -3,6 +3,7 @@ module github.com/joffref/Projet-MRH
 go 1.18
 
 require (
+	github.com/Arafatk/glot v0.0.0-20180312013246-79d5219000f0
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/sirupsen/logrus v1.8.1
 )
