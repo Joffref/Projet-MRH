@@ -1,7 +1,6 @@
 package data_conversion
 
 import (
-	"bufio"
 	"bytes"
 	"github.com/joffref/Projet-MRH/utils"
 	log "github.com/sirupsen/logrus"
@@ -9,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"reflect"
 	"regexp"
 	"strings"
 )
@@ -57,8 +57,8 @@ func batchConvert(logger *log.Logger) []string {
 func sanitizeData(logger *log.Logger, data string) []string {
 	logger.Info("sanitizeData")
 	var sanitizedData []string
-	for _, s := range strings.Split(data, " ") {
-		if v, _ := regexp.MatchString("2*", s); v == true {
+	for _, s := range strings.Split(data, "\n") {
+		if v, _ := regexp.MatchString("^2", s); v == true {
 			sanitizedData = append(sanitizedData, s)
 		}
 	}
@@ -67,20 +67,32 @@ func sanitizeData(logger *log.Logger, data string) []string {
 
 func pushDataInCSVFile(logger *log.Logger, data []string) {
 	logger.Info("pushData")
-	file, err := os.OpenFile(utils.Path+"/data/data.csv", os.O_RDWR|os.O_CREATE, 0755)
+	logger.Info("data: ", reflect.TypeOf(data))
+	pwd, err := os.Getwd()
+	if err != nil {
+		logger.Error(err)
+	}
+	file, err := os.OpenFile(pwd+"/data/data.csv", os.O_RDWR|os.O_CREATE, 0655)
 	if err != nil {
 		logger.Error(err)
 	}
 	defer file.Close()
 	for _, s := range data {
-		err = file.Sync()
+		_, err = file.WriteString(s + "\n")
 		if err != nil {
 			logger.Error(err)
 		}
-		w := bufio.NewWriter(file)
-		_, err := w.WriteString(s)
-		if err != nil {
-			logger.Error(err)
-		}
+	}
+}
+
+func RemoveData(logger *log.Logger) {
+	logger.Info("RemoveData")
+	path, err := os.Getwd()
+	if err != nil {
+		logger.Error(err)
+	}
+	err = os.Remove(path + "/data/data.csv")
+	if err != nil {
+		logger.Error(err)
 	}
 }
