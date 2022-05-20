@@ -25,7 +25,7 @@ func readData() ([][]string, error) {
 	return csv.NewReader(bytes.NewReader(data)).ReadAll()
 }
 
-func Graph(logger *log.Logger) {
+func Graph(logger *log.Logger, file string) {
 	var dates []float64
 	var values []float64
 	data, err := readData()
@@ -51,5 +51,5 @@ func Graph(logger *log.Logger) {
 	dataSet = append(dataSet, values)
 	plot, _ := glot.NewPlot(2, true, true)
 	plot.AddPointGroup("data", "points", dataSet)
-	plot.SavePlot("2.png")
+	plot.SavePlot("figures/" + file + ".png")
 }

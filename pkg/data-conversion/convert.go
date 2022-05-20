@@ -5,52 +5,43 @@ import (
 	"github.com/joffref/Projet-MRH/utils"
 	log "github.com/sirupsen/logrus"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
-	"reflect"
 	"regexp"
 	"strings"
 )
 
-func Convert(logger *log.Logger) {
+func Convert(logger *log.Logger, file string) {
 	log.Info("Convert")
-	data := batchConvert(logger)
+	data := batchConvert(logger, file)
 	pushDataInCSVFile(logger, data)
 }
 
-func batchConvert(logger *log.Logger) []string {
+func batchConvert(logger *log.Logger, file string) []string {
 	logger.Info("BatchConvert")
 	path, err := os.Getwd()
-	if err != nil {
-		logger.Error(err)
-	}
-	entries, err := ioutil.ReadDir(path + "/data/")
-	if err != nil {
-		logger.Error(err)
-	}
 	var data bytes.Buffer
 	var dataStringFormat []string
-	for _, entry := range entries {
-		cmd := exec.Command(
-			"python3",
-			path+utils.Path+"/el4000.py",
-			"-p",
-			"csv",
-			"-d",
-			"';'",
-			"-v",
-			"--data-only",
-			path+"/data/"+entry.Name(),
-		)
-		cmd.Stdout = io.MultiWriter(logger.Writer(), &data)
-		cmd.Stderr = logger.Writer()
-		dataStringFormat = append(dataStringFormat, sanitizeData(logger, data.String())...)
-		err = cmd.Run()
-		if err != nil {
-			logger.Error(err)
-		}
+	cmd := exec.Command(
+		"python3",
+		path+utils.Path+"/el4000.py",
+		"-p",
+		"csv",
+		"-d",
+		"';'",
+		"-v",
+		"--data-only",
+		path+"/data/"+file,
+	)
+
+	cmd.Stdout = io.MultiWriter(logger.Writer(), &data)
+	cmd.Stderr = logger.Writer()
+
+	err = cmd.Run()
+	if err != nil {
+		logger.Error(err)
 	}
+	dataStringFormat = append(dataStringFormat, sanitizeData(logger, data.String())...)
 	return dataStringFormat
 }
 
@@ -67,7 +58,6 @@ func sanitizeData(logger *log.Logger, data string) []string {
 
 func pushDataInCSVFile(logger *log.Logger, data []string) {
 	logger.Info("pushData")
-	logger.Info("data: ", reflect.TypeOf(data))
 	pwd, err := os.Getwd()
 	if err != nil {
 		logger.Error(err)
