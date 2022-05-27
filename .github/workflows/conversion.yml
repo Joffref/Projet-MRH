@@ -1,0 +1,38 @@
+name: Graph
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-go-app-and-deploy-graph:
+    runs-on: ubuntu-latest
+    permissions:
+        contents: write
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+
+    - name: Build
+      run: go build -v ./... -o runtime
+
+    - name: Change Rights
+      run: chmod u+x runtime
+    
+    - name: Run
+      run: ./runtime
+    
+    - name: ZIP
+      run: tar cvfz graph.tar.gz figures/
+    
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "graph.tar.gz"
+        token: ${{ secrets.GITHUB_TOKEN }}
+      
