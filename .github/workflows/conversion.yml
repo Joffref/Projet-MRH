@@ -40,5 +40,5 @@ jobs:
     - uses: ncipollo/release-action@v1
       with:
         artifacts: "graph.tar.gz"
-        tag: ${{ github.event.repository.updated_at}}
+        tag: "${{ github.event.repository.updated_at}}"
       
