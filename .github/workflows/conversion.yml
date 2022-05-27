@@ -18,10 +18,13 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.18
+        
     - name: Install dependencies
       run: |
         go version
         go mod tidy
+        sudo apt-get install gnuplot
+
     - name: Build
       run: go build -o ./runtime
 
