@@ -36,7 +36,7 @@ func Graph(logger *log.Logger, file string) {
 				logger.Error(err)
 			}
 			dates = append(dates, float64(date.Unix()))
-			value, err := strconv.ParseFloat(strings.Replace(strings.Split(col, ";")[1], "'", "", -1), 64)
+			value, err := strconv.ParseFloat(strings.Replace(strings.Split(col, ";")[2], "'", "", -1), 64)
 			if err != nil {
 				logger.Error(err)
 			}
