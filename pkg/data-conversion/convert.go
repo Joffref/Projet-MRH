@@ -49,7 +49,7 @@ func sanitizeData(logger *log.Logger, data string) []string {
 	logger.Info("sanitizeData")
 	var sanitizedData []string
 	for _, s := range strings.Split(data, "\n") {
-		if v, _ := regexp.MatchString("^2", s); v == true {
+		if v, _ := regexp.MatchString("^[0-9]", s); v == true {
 			sanitizedData = append(sanitizedData, s)
 		}
 	}
