@@ -50,6 +50,6 @@ func Graph(logger *log.Logger, file string) {
 	dataSet = append(dataSet, dates)
 	dataSet = append(dataSet, values)
 	plot, _ := glot.NewPlot(2, true, true)
-	plot.AddPointGroup("data", "points", dataSet)
+	plot.AddPointGroup("data", "linespoints", dataSet)
 	plot.SavePlot("figures/" + file + ".png")
 }
